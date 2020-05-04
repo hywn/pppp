@@ -1,0 +1,12 @@
+#define /## (.+)/ <h2>@1</h2>
+#define /# (.+)/ <h1>@1</h1>
+#define /```(.+?)```/ <pre>@1</pre>
+#define /`(.+?)`/ <code>@1</code>
+#define /\[(.+?)\]\((.+?)\)/ <a href="@2">@1</a>
+
+# hello
+## how are you today
+
+here is `some code`
+here is ```some code in a block```
+here is [link](https://google.com)

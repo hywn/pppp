@@ -6,7 +6,7 @@ use the syntax
 ```
 #def <regex> <replacement> #fed
 ```
-to define a replacement, using @<group number> to reference regex groups.
+to define a replacement, using `@<group number>` to reference regex groups.
 
 note: do not use `/g`; all replacements are global.
 

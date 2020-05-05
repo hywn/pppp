@@ -1,0 +1,6 @@
+#def /!blog (.+?)\n\n(.+)/m
+<div class="box">bob's blog, @1</div>
+<div class="box">
+	@2
+</div>
+#fed

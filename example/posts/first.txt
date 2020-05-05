@@ -1,0 +1,8 @@
+#include ../markdown.prrr
+#include ../blog.prrr
+
+!blog may 2020
+
+# hello everyone
+
+welcome to my blog. this is my first post!!! :)

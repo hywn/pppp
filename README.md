@@ -57,8 +57,9 @@ I have something to say. Please pay attention:
 ```
 
 ## other notes
-- is a single script that uses stdin/stdout
-- example usage: `./prrr.rb < test.prrr > out.html`
+- accepts input via filename *or* stdin (uses Ruby's ARGF)
+- can use #include <filename relative to current file> to include files (see `example/posts/first.txt` for example)
+- example usage: `./prrr.rb example/posts/first.txt`
 
 ## eventual goal
 some kind of configurable text preprocessor

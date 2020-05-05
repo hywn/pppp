@@ -2,15 +2,21 @@
 some kind of text preprocessing thing?
 
 ## current state
-use the syntax
+the pattern
 ```
 #def <regex> <replacement> #fed
 ```
-to define a replacement, using `@<group number>` to reference regex groups.
+defines a replacement that will continually replace `<regex>` with `<replacement>`. the pattern `@<group number>` found within `<replacement>` will be replaced with the corresponding regex group.
 
 note: do not use `/g`; all replacements are global.
 
-## example (markdown emulator)
+the pattern
+```
+#include <filename>
+```
+will be replaced by the output of `./prrr <filename>`. also, any replacements defined in `./prrr <filename>` will be available to the current file.
+
+## single-file example (markdown emulator)
 input:
 ```
 #def /## (.+)/ <h2>@1</h2> #fed
@@ -38,6 +44,9 @@ here is <pre>some code in a block</pre>
 here is <a href="https://google.com">link</a>
 ```
 
+## multi-file example (blog)
+see [example/posts/first.txt](https://github.com/hywn/prrr/blob/master/example/posts/first.txt)
+
 ## note about multi-line replacements
 currently, prrr will try to align multi-line replacements, e.g.
 ```
@@ -58,17 +67,4 @@ I have something to say. Please pay attention:
 
 ## other notes
 - accepts input via filename *or* stdin (uses Ruby's ARGF)
-- can use #include <filename relative to current file> to include files (see `example/posts/first.txt` for example)
-- example usage: `./prrr.rb example/posts/first.txt`
-
-## eventual goal
-some kind of configurable text preprocessor
-
-```
-#define tag { contents } => <tag>contents</tag>
-#define !function args... => function(args)
-```
-
-`h1 { hi world }` -> `<h1>hi world</h1>`
-
-`!console.log 'hello world' 'hi'` -> `console.log('hello world', 'hi')`
+- example usage: `./prrr.rb file.txt`

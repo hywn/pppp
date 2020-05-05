@@ -1,7 +1,7 @@
 # prrr
 some kind of text preprocessing thing?
 
-# current state
+## current state
 use the syntax
 ```
 #def <regex> <replacement> #fed
@@ -10,7 +10,7 @@ to define a replacement, using `@<group number>` to reference regex groups.
 
 note: do not use `/g`; all replacements are global.
 
-# example (markdown emulator)
+## example (markdown emulator)
 input:
 ```
 #def /## (.+)/ <h2>@1</h2> #fed
@@ -38,7 +38,7 @@ here is <pre>some code in a block</pre>
 here is <a href="https://google.com">link</a>
 ```
 
-# note about multi-line defines
+## note about multi-line replacements
 currently, prrr will try to align multi-line replacements, e.g.
 ```
 #def /!important (.+)/
@@ -56,11 +56,11 @@ I have something to say. Please pay attention:
                          Thank you for your time
 ```
 
-# other notes
+## other notes
 - is a single script that uses stdin/stdout
 - example usage: `./prrr.rb < test.prrr > out.html`
 
-# eventual goal
+## eventual goal
 some kind of configurable text preprocessor
 
 ```

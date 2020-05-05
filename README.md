@@ -1,21 +1,6 @@
 # prrr
 some kind of text preprocessing thing?
 
-## current state
-the pattern
-```
-#def <regex> <replacement> #fed
-```
-defines a replacement that will continually replace `<regex>` with `<replacement>`. the pattern `@<group number>` found within `<replacement>` will be replaced with the corresponding regex group.
-
-note: do not use `/g`; all replacements are global.
-
-the pattern
-```
-#include <filename>
-```
-will be replaced by the output of `./prrr <filename>`. also, any replacements defined in `./prrr <filename>` will be available to the current file.
-
 ## single-file example (markdown emulator)
 input:
 ```
@@ -46,6 +31,21 @@ here is <a href="https://google.com">link</a>
 
 ## multi-file example (blog)
 see [example/posts/first.txt](https://github.com/hywn/prrr/blob/master/example/posts/first.txt)
+
+## usage
+the pattern
+```
+#def <regex> <replacement> #fed
+```
+defines a replacement that will continually replace `<regex>` with `<replacement>`. the pattern `@<group number>` found within `<replacement>` will be replaced with the corresponding regex group.
+
+note: do not use `/g`; all replacements are global.
+
+the pattern
+```
+#include <filename>
+```
+will be replaced by the output of `./prrr <filename>`. also, any replacements defined in `./prrr <filename>` will be available to the current file.
 
 ## note about multi-line replacements
 currently, prrr will try to align multi-line replacements, e.g.

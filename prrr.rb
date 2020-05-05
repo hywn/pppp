@@ -12,22 +12,35 @@ end
 
 output = input
 
-input.scan /#define (\/.+\/[mi]*) (.+)/ do |src, dest|
+defegex = /#def (\/.+?(?<!\\)\/[mi]*)\s(.+?)\s#fed\n?/m
 
-	output = output.sub /#define (\/.+\/[mi]*) (.+)/, ''
+keep_whitespace = true
+
+input.scan defegex do |src, dest|
+
+	output = output.sub defegex, ''
 
 	regex = src.to_re
 	
 	while output.match? regex
-		
+	
 		evaluated = dest
 		
 		groups = (output.match regex).to_a.each_with_index do |content, i|
 			evaluated = evaluated.gsub("@#{i}", content)
 		end
 		
+		if keep_whitespace
+			padding = (output.match /(?<=\n)(.*?)#{Regexp.escape (output.match regex)[0]}/)[1]
+				.gsub /[^\s]/, ' '
+		
+			evaluated = evaluated.gsub("\n", "\n#{padding}")
+		end
+		
 		output = output.sub regex, evaluated
+	
 	end
+	
 end
 
 puts output

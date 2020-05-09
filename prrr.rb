@@ -87,4 +87,4 @@ end
 
 output, defines = prrr input
 
-puts output
+print output

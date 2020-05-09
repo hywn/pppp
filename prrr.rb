@@ -6,72 +6,85 @@ class String
 		# write something better later?
 		eval self
 	end
+	def read_prrr()
+		prrr File.read File.expand_path File.join ARGF.path, '..', self
+	end
 end
 
 input = ARGF.read
 
 DEFEGEX = /^#def (\/.+?(?<!\\)\/[mi]*)\s(.+?)\s#fed\n?/m
-INCLEGEX = /^#include (.+)\n?/
+INCLEGEX = /^#include(d?) (.+)/
+INCLUDED = /^#included (.+)\n?/
 
-$defines = []
-
-def prrr(input, keep_whitespace=true)
+def prrr(input, defines=[], keep_whitespace=true)
 
 	input = input.gsub "\r\n", "\n"
 
 	output = input
 
 	# process includes
-	input.scan INCLEGEX do |relpath|
+	input.scan INCLEGEX do |silent, relpath|
 
-		contents = File.read File.expand_path File.join ARGF.path, '..', relpath
+		new_contents, new_defines = relpath.read_prrr
 
-		output = output.sub INCLEGEX, (prrr contents)
+		defines.push *new_defines
+
+		if silent.empty?
+			output = output.sub INCLEGEX, new_contents
+		else
+			output = output.sub INCLUDED, ''
+		end
 	end
 
 	# process defines
 	input.scan DEFEGEX do |regex_string, replacement_string|
 
-		$defines.push [regex_string.to_re, replacement_string]
+		defines.push [regex_string.to_re, replacement_string]
 
 		output = output.sub DEFEGEX, ''
 	end
 
 	# run defines
-	$defines.each do |pattern, replacement|
+	while defines.map { |p, r| output.match? p } .any?
 
-		while output.match? pattern
+		defines.each do |pattern, replacement|
 
-			input_groups = (output.match pattern).to_a
+			while output.match? pattern
 
-			evaluated = replacement
+				input_groups = (output.match pattern).to_a
 
-			loop do
+				evaluated = replacement
 
-				match = evaluated.match /^(.*?)@(\d+?)/
-				break if not match
+				loop do
 
-				r = input_groups[match[2].to_i]
+					match = evaluated.match /^(.*?)@(\d+?)/
+					break if not match
 
-				r = r.gsub "\n", "\n#{match[1].gsub /[^\s]/, ' '}" if keep_whitespace
+					r = input_groups[match[2].to_i]
 
-				evaluated = evaluated.sub /@#{match[2]}/, r
+					r = r.gsub "\n", "\n#{match[1].gsub /[^\s]/, ' '}" if keep_whitespace
+
+					evaluated = evaluated.sub /@#{match[2]}/, r
+				end
+
+				if keep_whitespace
+
+					orig_text = Regexp.escape input_groups[0]
+
+					padding = (output.match /^(.*?)#{orig_text}/)[1].gsub(/[^\s]/, ' ')
+
+					evaluated = evaluated.gsub "\n", "\n#{padding}"
+				end
+
+				output = output.sub pattern, evaluated
 			end
-
-			if keep_whitespace
-
-				orig_text = Regexp.escape input_groups[0]
-
-				padding = (output.match /^(.*?)#{orig_text}/)[1].gsub(/[^\s]/, ' ')
-
-				evaluated = evaluated.gsub "\n", "\n#{padding}"
-			end
-
-			output = output.sub pattern, evaluated
 		end
 	end
 
-	output
+	[output, defines]
 end
 
-puts prrr input
+output, defines = prrr input
+
+puts output

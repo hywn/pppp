@@ -50,35 +50,26 @@ def prrr(input, defines=[], keep_whitespace=true)
 
 		defines.each do |pattern, replacement|
 
-			while output.match? pattern
-
-				input_groups = (output.match pattern).to_a
+			output.gsub!(pattern) {
 
 				evaluated = replacement
 
-				loop do
+				input_groups = output.match(pattern).to_a
 
-					match = evaluated.match /^(.*?)@(\d+?)/
-					break if not match
+				pre = $`.lines[-1].chomp.gsub /[^\s]/, ' '
+				evaluated.gsub! "\n", "\n#{pre}" if keep_whitespace
 
-					r = input_groups[match[2].to_i]
+				evaluated.gsub(/@(\d+?)/) {
 
-					r = r.gsub "\n", "\n#{match[1].gsub /[^\s]/, ' '}" if keep_whitespace
+					r = input_groups[$1.to_i]
 
-					evaluated = evaluated.sub /@#{match[2]}/, r
-				end
+					pre = $`.lines[-1].chomp.gsub /[^\s]/, ' '
+					r.gsub! "\n", "\n#{pre}" if keep_whitespace
 
-				if keep_whitespace
+					r
 
-					orig_text = Regexp.escape input_groups[0]
-
-					padding = (output.match /^(.*?)#{orig_text}/)[1].gsub(/[^\s]/, ' ')
-
-					evaluated = evaluated.gsub "\n", "\n#{padding}"
-				end
-
-				output = output.sub pattern, evaluated
-			end
+				}
+			}
 		end
 	end
 

@@ -52,16 +52,20 @@ def prrr(input, defines=[], keep_whitespace=true)
 
 			output.gsub!(pattern) {
 
-				evaluated = replacement
+				evaluated = replacement.dup
 
-				input_groups = output.match(pattern).to_a
+				input_groups = $~.captures
 
-				pre = $`.lines[-1].chomp.gsub /[^\s]/, ' '
-				evaluated.gsub! "\n", "\n#{pre}" if keep_whitespace
+				prespace = $`.lines[-1].gsub /[^\s]/, ' '
+				prespace = '' if prespace[-1] == "\n"
 
-				evaluated.gsub(/@(\d+?)/) {
+				evaluated.gsub! "\n", "\n#{prespace}" if keep_whitespace
 
-					r = input_groups[$1.to_i]
+				evaluated.gsub!(/@(\d+?)/) {
+
+					r = input_groups[$1.to_i - 1]
+
+					next if not r
 
 					pre = $`.lines[-1].chomp.gsub /[^\s]/, ' '
 					r.gsub! "\n", "\n#{pre}" if keep_whitespace
